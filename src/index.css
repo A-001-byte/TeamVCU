@@ -851,20 +851,949 @@ body {
   }
 }
 
+/* Financial Autopsy Styles */
+.financial-autopsy {
+  width: 100%;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
+}
+
+.autopsy-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.autopsy-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-color);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.autopsy-item:hover {
+  background-color: var(--bg-primary);
+  box-shadow: var(--shadow-md);
+  transform: translateX(4px);
+}
+
+.autopsy-rank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary-dark) 100%);
+  color: white;
+  border-radius: var(--radius-xl);
+  font-weight: 700;
+  font-size: 1rem;
+  box-shadow: var(--shadow-md);
+  flex-shrink: 0;
+}
+
+.autopsy-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-left: 1rem;
+}
+
+.autopsy-merchant {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.autopsy-date {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.autopsy-amount {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--accent-danger);
+  margin-left: auto;
+}
+
+.autopsy-reason {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  margin-top: 0.25rem;
+  font-style: italic;
+}
+
+/* Financial Twin Detailed View */
+.financial-twin-detail {
+  width: 100%;
+}
+
+.twin-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.twin-metric-card {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-color);
+  padding: 1.5rem;
+  transition: all 0.2s;
+}
+
+.twin-metric-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.twin-metric-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.twin-metric-value {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.twin-risk-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-xl);
+  font-size: 0.875rem;
+  font-weight: 700;
+  margin-top: 0.5rem;
+}
+
+.twin-risk-badge.low {
+  background: var(--accent-success-light);
+  color: var(--accent-success);
+}
+
+.twin-risk-badge.medium {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.twin-risk-badge.high {
+  background: var(--accent-danger-light);
+  color: var(--accent-danger);
+}
+
+.twin-details-section {
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.twin-details-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.twin-details-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.twin-detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+}
+
+.twin-detail-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.twin-detail-value {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Burn Rate Detailed View */
+.burn-rate-detail {
+  width: 100%;
+}
+
+.burn-rate-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.burn-rate-warning {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-xl);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.burn-rate-warning.safe {
+  background: var(--accent-success-light);
+  color: var(--accent-success);
+}
+
+.burn-rate-warning.caution {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.burn-rate-warning.critical {
+  background: var(--accent-danger-light);
+  color: var(--accent-danger);
+}
+
+.burn-rate-main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.burn-rate-card {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-color);
+  padding: 1.5rem;
+}
+
+.burn-rate-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  margin: 0.5rem 0;
+}
+
+.burn-rate-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.burn-rate-insights {
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.burn-rate-insight-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.burn-rate-insight-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  margin-bottom: 0.75rem;
+}
+
+.burn-rate-insight-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.burn-rate-insight-icon.info {
+  background: var(--accent-primary-light);
+  color: var(--accent-primary);
+}
+
+.burn-rate-insight-text {
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+/* Hide bottom nav on desktop */
+.bottom-nav {
+  display: none;
+}
+
+/* Page Components */
+.page-container {
+  min-height: 100vh;
+  background: var(--bg-gradient);
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  margin-bottom: 1.5rem;
+  transition: all 0.2s;
+  box-shadow: var(--shadow-sm);
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-md);
+  transform: translateX(-4px);
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+.page-subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+.page-content {
+  width: 100%;
+}
+
+/* Intelligence Cards (Summary Cards on Dashboard) */
+.intelligence-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 1.75rem;
+}
+
+.intelligence-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  padding: 1.75rem;
+  transform-style: preserve-3d;
+  transition: all 0.3s;
+  cursor: pointer;
+  color: var(--text-primary);
+}
+
+.intelligence-card:hover {
+  box-shadow: var(--shadow-xl);
+  transform: translateY(-4px);
+}
+
+.intelligence-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.intelligence-icon-wrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-lg);
+  color: white;
+}
+
+.intelligence-arrow {
+  color: var(--text-tertiary);
+  transition: all 0.2s;
+}
+
+.intelligence-card:hover .intelligence-arrow {
+  color: var(--accent-primary);
+  transform: translateX(4px);
+}
+
+.intelligence-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+.intelligence-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.intelligence-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.intelligence-metric {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: var(--bg-primary);
+  border-radius: var(--radius-lg);
+}
+
+.intelligence-metric-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.intelligence-metric-value {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Sidebar Navigation Links */
+.sidebar-nav a {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  width: 100%;
+}
+
+@media (max-width: 1200px) {
+  .intelligence-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile-First Styles for Android/Cordova (max-width: 768px) */
 @media (max-width: 768px) {
-  .dashboard-content {
-    padding: 1rem;
+  /* Safe area padding for Android status bar */
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    font-size: 16px; /* Increased base font for mobile readability */
   }
-  
+
+  #root {
+    min-height: 100vh;
+    min-height: -webkit-fill-available; /* iOS fix */
+  }
+
+  /* Header adjustments */
+  .dashboard-header-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 100;
+    padding-top: env(safe-area-inset-top);
+  }
+
   .header-container {
-    padding: 1rem;
+    padding: 0.75rem 1rem;
+    flex-wrap: nowrap;
   }
-  
+
+  .header-left-section {
+    gap: 0.75rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .logo-section {
+    gap: 0.5rem;
+  }
+
+  .logo-title {
+    font-size: 1.25rem;
+  }
+
+  .logo-subtitle {
+    font-size: 0.7rem;
+  }
+
+  .trust-badges {
+    display: none;
+  }
+
+  .header-right-section {
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .search-wrapper {
+    display: none; /* Hide search on mobile */
+  }
+
   .header-link {
     display: none;
   }
-  
-  .search-input {
-    width: 150px;
+
+  .profile-section {
+    padding: 0.375rem 0.75rem;
+  }
+
+  .profile-name {
+    display: none; /* Hide name, show only avatar */
+  }
+
+  /* Dashboard content - single column */
+  .dashboard-content {
+    padding: 0.75rem;
+    padding-top: calc(60px + env(safe-area-inset-top) + 0.75rem); /* Account for fixed header */
+    padding-bottom: calc(70px + env(safe-area-inset-bottom)); /* Account for bottom nav */
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* Hide sidebar on mobile */
+  .dashboard-sidebar {
+    display: none;
+  }
+
+  /* Bottom Navigation Bar (Android-style) - Show only on mobile */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border-color);
+    padding: 0.5rem 0;
+    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
+    z-index: 100;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.5rem 0.75rem;
+    min-height: 48px; /* Touch target */
+    min-width: 48px;
+    border: none;
+    background: none;
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    flex: 1;
+  }
+
+  .bottom-nav-item.active {
+    color: var(--accent-primary);
+  }
+
+  .bottom-nav-item svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Stats grid - single column */
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .stat-card {
+    padding: 1.25rem;
+  }
+
+  .stat-amount {
+    font-size: 1.5rem;
+  }
+
+  /* Chart adjustments */
+  .chart-card {
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .chart-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .chart-title {
+    font-size: 1.25rem;
+  }
+
+  .chart-subtitle {
+    font-size: 0.875rem;
+  }
+
+  .time-range-buttons {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .time-btn {
+    flex: 1;
+    min-width: calc(50% - 0.25rem);
+    padding: 0.75rem 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  /* Reduce chart height for mobile */
+  .chart-card .recharts-wrapper,
+  .chart-card .recharts-responsive-container {
+    max-height: 250px !important;
+    width: 100% !important;
+  }
+
+  /* Ensure charts don't overflow */
+  .chart-card svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Transaction History - move below charts, full width */
+  .dashboard-right-sidebar {
+    order: 999; /* Move to bottom */
+    width: 100%;
+  }
+
+  .transactions-card {
+    padding: 1.25rem;
+  }
+
+  .transaction-item {
+    padding: 1rem;
+    min-height: 64px; /* Touch-friendly */
+  }
+
+  /* Intelligence cards - single column */
+  .intelligence-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .intelligence-card {
+    padding: 1.5rem;
+  }
+
+  .intelligence-title {
+    font-size: 1.125rem;
+  }
+
+  /* Buttons - full width and taller */
+  .add-transaction-btn {
+    width: 100%;
+    padding: 1rem;
+    min-height: 48px;
+    font-size: 0.9375rem;
+    margin-top: 1rem;
+  }
+
+  .back-button {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    min-height: 48px;
+    font-size: 0.9375rem;
+    margin-bottom: 1.25rem;
+    justify-content: center;
+  }
+
+  /* Page containers */
+  .page-container {
+    padding: 0.75rem;
+    padding-top: calc(60px + env(safe-area-inset-top) + 0.75rem);
+    padding-bottom: calc(70px + env(safe-area-inset-bottom));
+  }
+
+  .page-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .page-title {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-subtitle {
+    font-size: 0.9375rem;
+  }
+
+  /* Financial Twin Detail */
+  .twin-metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .twin-metric-card {
+    padding: 1.25rem;
+  }
+
+  .twin-metric-value {
+    font-size: 1.5rem;
+  }
+
+  .twin-details-section {
+    padding: 1.25rem;
+    margin-top: 1rem;
+  }
+
+  /* Burn Rate Detail */
+  .burn-rate-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .burn-rate-warning {
+    width: 100%;
+    justify-content: center;
+    padding: 0.875rem 1rem;
+    min-height: 48px;
+  }
+
+  .burn-rate-main {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .burn-rate-card {
+    padding: 1.25rem;
+  }
+
+  .burn-rate-value {
+    font-size: 2rem;
+  }
+
+  .burn-rate-insights {
+    padding: 1.25rem;
+    margin-top: 1rem;
+  }
+
+  .burn-rate-insight-item {
+    padding: 1rem;
+    min-height: 48px;
+  }
+
+  /* Financial Autopsy */
+  .financial-autopsy {
+    width: 100%;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .autopsy-item {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    min-height: auto;
+  }
+
+  .autopsy-rank {
+    width: 36px;
+    height: 36px;
+    font-size: 0.875rem;
+  }
+
+  .autopsy-content {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .autopsy-merchant {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .autopsy-amount {
+    width: 100%;
+    text-align: left;
+    font-size: 1.25rem;
+    margin-top: 0.5rem;
+  }
+
+  /* Typography improvements */
+  .stat-label {
+    font-size: 0.8125rem;
+  }
+
+  .twin-metric-label {
+    font-size: 0.8125rem;
+  }
+
+  .burn-rate-label {
+    font-size: 0.875rem;
+  }
+
+  /* Prevent horizontal scroll */
+  * {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  body, html {
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+  }
+
+  /* Ensure proper scrolling */
+  .thinktwice-dashboard,
+  .page-container {
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Ensure cards don't overflow */
+  .chart-card,
+  .stat-card,
+  .intelligence-card,
+  .twin-metric-card,
+  .burn-rate-card {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Increase vertical spacing */
+  .dashboard-main {
+    gap: 1.25rem;
+  }
+
+  .chart-card + .chart-card {
+    margin-top: 1rem;
+  }
+
+  /* Touch-friendly spacing */
+  .intelligence-metric {
+    padding: 1rem;
+    min-height: 48px;
+  }
+
+  .twin-detail-item {
+    padding: 1rem;
+    min-height: 48px;
+  }
+
+  /* Additional mobile optimizations */
+  .chart-legend {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  /* Ensure all text is readable */
+  .transaction-name,
+  .autopsy-merchant {
+    font-size: 0.9375rem;
+  }
+
+  .transaction-date,
+  .autopsy-date {
+    font-size: 0.8125rem;
+  }
+
+  /* Improve touch targets for all interactive elements */
+  button,
+  .nav-item,
+  .time-btn,
+  .transaction-item,
+  .autopsy-item,
+  .intelligence-card {
+    min-height: 48px;
+    -webkit-tap-highlight-color: rgba(37, 99, 235, 0.1);
+  }
+
+  /* Better spacing for mobile lists */
+  .transactions-list,
+  .autopsy-list {
+    gap: 1rem;
+  }
+
+  /* Full width inputs and buttons */
+  input,
+  textarea,
+  select {
+    width: 100%;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  /* Improve readability of small text */
+  .trend-label,
+  .twin-detail-label,
+  .intelligence-metric-label {
+    font-size: 0.8125rem;
   }
 }
