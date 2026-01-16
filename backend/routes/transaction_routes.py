@@ -3,6 +3,8 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from extensions import db
 from models.transaction import Transaction
 import csv
+from utils.categorizer import auto_categorize
+
 
 txn_bp = Blueprint("transactions", __name__)
 
@@ -19,7 +21,7 @@ def add_transaction():
         user_id=user_id,
         amount=data["amount"],
         txn_type=data["txn_type"],
-        category=data["category"],
+        category=data.get("category") or auto_categorize(data["merchant"]),
         merchant=data["merchant"],
         mode=data["mode"],
         source="MANUAL"
