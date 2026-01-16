@@ -65,6 +65,7 @@ class ApiClient {
 
   /**
    * Get auth headers with token
+   * Token is synced from Supabase session to localStorage by authService
    * @returns {object} Headers object
    */
   getAuthHeaders() {

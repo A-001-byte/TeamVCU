@@ -46,38 +46,30 @@ export default function LoginPage() {
     setError('');
     setIsLoading(true);
 
-    // Demo mode: Simulate API delay and bypass backend
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
     try {
-      // Demo mode: Accept any credentials and simulate successful login
-      const demoUser = {
-        id: isSignUp ? `user-${Date.now()}` : 'demo-admin-001',
-        name: isSignUp ? (name || 'Demo User') : 'Demo Admin',
-        email: email || 'demo@thinktwice.com',
-        role: isSignUp ? 'user' : 'admin'
-      };
+      let result;
+      if (isSignUp) {
+        result = await signup({
+          name,
+          email,
+          password,
+          monthly_income: parseFloat(monthlyIncome) || 0,
+          income_type: incomeType,
+        });
+      } else {
+        result = await login(email, password);
+      }
 
-      const demoToken = `demo-token-${Date.now()}`;
-      
-      // Store in localStorage
-      localStorage.setItem('thinktwice_token', demoToken);
-      localStorage.setItem('thinktwice_user', JSON.stringify(demoUser));
-
-      // Update auth context state directly
-      setIsAuthenticated(true);
-      setUser(demoUser);
-
-      // Redirect to dashboard
-      navigate('/');
-    } catch (err) {
-      // Even if there's an error, proceed with demo mode
-      console.log('Demo mode - proceeding anyway:', err.message);
-      // Still redirect for demo purposes
-      setTimeout(() => {
+      if (result && result.success) {
+        // Redirect to dashboard on success
         navigate('/');
-      }, 500);
-    } finally {
+      } else {
+        setError(result?.error || 'Authentication failed. Please try again.');
+        setIsLoading(false);
+      }
+    } catch (err) {
+      console.error('Authentication error:', err);
+      setError(err?.message || 'An error occurred. Please try again.');
       setIsLoading(false);
     }
   };
@@ -158,8 +150,8 @@ export default function LoginPage() {
             >
               <Info size={16} />
               <div className="login-demo-content">
-                <span className="login-demo-label">Demo Admin:</span>
-                <span className="login-demo-credentials">admin@thinktwice.com / admin123</span>
+                <span className="login-demo-label">New User?</span>
+                <span className="login-demo-credentials">Sign up to create your account and start tracking expenses</span>
               </div>
             </motion.div>
           )}
@@ -267,10 +259,6 @@ export default function LoginPage() {
               )}
             </motion.button>
 
-            {/* Demo Mode Notice */}
-            <p className="login-demo-mode-notice">
-              Demo Mode: Any credentials will work
-            </p>
           </form>
 
           {/* Footer */}
