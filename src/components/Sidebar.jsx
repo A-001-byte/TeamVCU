@@ -1,7 +1,7 @@
 /**
  * Sidebar Component - Categories list and calendar
  */
-
+import { Link } from 'react-router-dom';
 import { RECENT_TRANSACTIONS, CALENDAR_MARKED_DATES } from '../data/mockData';
 import { formatCurrency } from '../utils/formatters';
 
@@ -46,6 +46,18 @@ function Sidebar() {
 
   return (
     <aside className="sidebar">
+      {/* Reports Section */}
+      <div className="sidebar-section">
+        <h3 className="sidebar-title">Reports</h3>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/financial-snapshot">Financial Snapshot</Link>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
       {/* Categories List */}
       <div className="sidebar-section">
         <h3 className="sidebar-title">Categories</h3>

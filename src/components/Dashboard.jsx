@@ -10,6 +10,7 @@ import {
   CreditCard, PieChart, Bell, Search, Shield, 
   Award, Users, ArrowUpRight, ArrowDownRight 
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { CHART_DATA, TRANSACTIONS, STATS_DATA, TRUST_INDICATORS } from '../data/mockData';
 import { formatCurrency } from '../utils/formatters';
@@ -189,6 +190,16 @@ export default function ThinkTwiceDashboard() {
                   <PieChart size={20} />
                   Analytics
                 </motion.button>
+                <Link to="/financial-snapshot" className='text-decoration-none'>
+                  <motion.button 
+                    className="nav-item"
+                    whileHover={{ x: 5 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <PieChart size={20} />
+                    Financial Snapshot
+                  </motion.button>
+                </Link>
                 <motion.button 
                   className="nav-item"
                   whileHover={{ x: 5 }}
