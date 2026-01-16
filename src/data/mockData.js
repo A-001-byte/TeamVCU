@@ -97,3 +97,15 @@ export const RECENT_TRANSACTIONS = [
 
 // Calendar Data (marked dates)
 export const CALENDAR_MARKED_DATES = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27];
+
+// Mock data for useDashboardData hook
+export const MOCK_DASHBOARD_DATA = STATS_DATA;
+export const MOCK_EXPENSE_DATA = MONTHLY_EXPENSE_DATA;
+export const MOCK_FINANCIAL_STATS = {
+  totalIncome: 50000,
+  totalExpenses: 46240,
+  netSavings: 3760,
+};
+
+// Utility function to simulate API delay
+export const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
