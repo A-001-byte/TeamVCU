@@ -41,10 +41,16 @@ const fetchWithTimeout = async (url, options = {}) => {
  */
 const handleResponse = async (response) => {
   if (!response.ok) {
-    const error = await response.json().catch(() => ({
-      message: `HTTP error! status: ${response.status}`,
-    }));
-    throw new Error(error.message || 'An error occurred');
+    let error;
+    try {
+      error = await response.json();
+    } catch {
+      error = {
+        message: `HTTP error! status: ${response.status}`,
+        error: response.statusText || 'Unknown error'
+      };
+    }
+    throw new Error(error.message || error.error || 'An error occurred');
   }
   return response.json();
 };
@@ -58,6 +64,15 @@ class ApiClient {
   }
 
   /**
+   * Get auth headers with token
+   * @returns {object} Headers object
+   */
+  getAuthHeaders() {
+    const token = localStorage.getItem('thinktwice_token');
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  }
+
+  /**
    * Get request
    * @param {string} endpoint - API endpoint
    * @param {RequestInit} options - Fetch options
@@ -68,6 +83,10 @@ class ApiClient {
     const response = await fetchWithTimeout(url, {
       ...options,
       method: 'GET',
+      headers: {
+        ...this.getAuthHeaders(),
+        ...options.headers,
+      },
     });
     return handleResponse(response);
   }
@@ -85,6 +104,10 @@ class ApiClient {
       ...options,
       method: 'POST',
       body: JSON.stringify(data),
+      headers: {
+        ...this.getAuthHeaders(),
+        ...options.headers,
+      },
     });
     return handleResponse(response);
   }
@@ -102,6 +125,10 @@ class ApiClient {
       ...options,
       method: 'PUT',
       body: JSON.stringify(data),
+      headers: {
+        ...this.getAuthHeaders(),
+        ...options.headers,
+      },
     });
     return handleResponse(response);
   }
@@ -117,6 +144,10 @@ class ApiClient {
     const response = await fetchWithTimeout(url, {
       ...options,
       method: 'DELETE',
+      headers: {
+        ...this.getAuthHeaders(),
+        ...options.headers,
+      },
     });
     return handleResponse(response);
   }

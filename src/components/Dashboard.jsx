@@ -10,17 +10,37 @@ import {
   CreditCard, PieChart, Bell, Search, Shield, 
   Award, Users, ArrowUpRight, ArrowDownRight, Brain, FileSearch, ArrowRight
 } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { CHART_DATA, TRANSACTIONS, STATS_DATA, TRUST_INDICATORS } from '../data/mockData';
 import { formatCurrency } from '../utils/formatters';
 import { useDashboardData } from '../hooks/useDashboardData';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function ThinkTwiceDashboard() {
   const [timeRange, setTimeRange] = useState('1month');
   const { data } = useDashboardData();
   const { financialTwin, burnRate, autopsyReport, savings } = data || {};
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  // Get user initials for avatar
+  const getUserInitials = (name) => {
+    if (!name) return 'U';
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  // Get user's first name for greeting
+  const getUserFirstName = (name) => {
+    if (!name) return 'User';
+    return name.split(' ')[0];
+  };
   
   const chartData = CHART_DATA;
   const transactions = TRANSACTIONS.map(t => ({
@@ -140,11 +160,13 @@ export default function ThinkTwiceDashboard() {
             <motion.div 
               className="profile-section"
               whileHover={{ scale: 1.05 }}
+              onClick={() => navigate('/profile')}
+              style={{ cursor: 'pointer' }}
             >
               <div className="profile-avatar">
-                <span>A</span>
+                <span>{getUserInitials(user?.name)}</span>
               </div>
-              <span className="profile-name">Hi, Akhil</span>
+              <span className="profile-name">Hi, {getUserFirstName(user?.name)}</span>
             </motion.div>
           </div>
         </div>
@@ -194,7 +216,7 @@ export default function ThinkTwiceDashboard() {
                   <PieChart size={20} />
                   Analytics
                 </motion.button>
-                <Link to="/financial-snapshot" className='text-decoration-none'>
+                <Link to="/financial-snapshot" className="text-decoration-none">
                   <motion.button 
                     className="nav-item"
                     whileHover={{ x: 5 }}
@@ -204,7 +226,7 @@ export default function ThinkTwiceDashboard() {
                     Financial Snapshot
                   </motion.button>
                 </Link>
-                <Link to="/financial-twin" style={{ textDecoration: 'none' }}>
+                <Link to="/financial-twin" className="text-decoration-none">
                   <motion.button 
                     className="nav-item"
                     whileHover={{ x: 5 }}
@@ -214,7 +236,7 @@ export default function ThinkTwiceDashboard() {
                     Financial Twin
                   </motion.button>
                 </Link>
-                <Link to="/burn-rate" style={{ textDecoration: 'none' }}>
+                <Link to="/burn-rate" className="text-decoration-none">
                   <motion.button 
                     className="nav-item"
                     whileHover={{ x: 5 }}
@@ -224,7 +246,7 @@ export default function ThinkTwiceDashboard() {
                     Burn Rate
                   </motion.button>
                 </Link>
-                <Link to="/financial-autopsy" style={{ textDecoration: 'none' }}>
+                <Link to="/financial-autopsy" className="text-decoration-none">
                   <motion.button 
                     className="nav-item"
                     whileHover={{ x: 5 }}
@@ -380,7 +402,7 @@ export default function ThinkTwiceDashboard() {
             <div className="intelligence-grid">
               {/* Financial Twin Summary Card */}
               {financialTwin && (
-                <Link to="/financial-twin" style={{ textDecoration: 'none' }}>
+                <Link to="/financial-twin" className="text-decoration-none">
                   <motion.div
                     className="intelligence-card"
                     variants={card3DVariants}
@@ -413,7 +435,7 @@ export default function ThinkTwiceDashboard() {
 
               {/* Burn Rate Summary Card */}
               {burnRate && (
-                <Link to="/burn-rate" style={{ textDecoration: 'none' }}>
+                <Link to="/burn-rate" className="text-decoration-none">
                   <motion.div
                     className="intelligence-card"
                     variants={card3DVariants}
@@ -452,7 +474,7 @@ export default function ThinkTwiceDashboard() {
 
               {/* Financial Autopsy Summary Card */}
               {autopsyReport && (
-                <Link to="/financial-autopsy" style={{ textDecoration: 'none' }}>
+                <Link to="/financial-autopsy" className="text-decoration-none">
                   <motion.div
                     className="intelligence-card"
                     variants={card3DVariants}

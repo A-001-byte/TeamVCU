@@ -1,8 +1,12 @@
 import { Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingSpinner from './components/LoadingSpinner';
+import ProtectedRoute from './components/ProtectedRoute';
+import { AuthProvider } from './contexts/AuthContext';
 import Dashboard from './components/Dashboard';
+import LoginPage from './pages/LoginPage';
+import ProfilePage from './pages/ProfilePage';
 import FinancialSnapshot from './pages/FinancialSnapshot';
 import FinancialTwinPage from './pages/FinancialTwinPage';
 import BurnRatePage from './pages/BurnRatePage';
@@ -11,19 +15,66 @@ import './App.css';
 
 function App() {
   return (
-    <Router>
-      <ErrorBoundary>
-        <Suspense fallback={<LoadingSpinner />}>
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/financial-snapshot" element={<FinancialSnapshot />} />
-            <Route path="/financial-twin" element={<FinancialTwinPage />} />
-            <Route path="/burn-rate" element={<BurnRatePage />} />
-            <Route path="/financial-autopsy" element={<FinancialAutopsyPage />} />
-          </Routes>
-        </Suspense>
-      </ErrorBoundary>
-    </Router>
+    <ErrorBoundary>
+      <AuthProvider>
+        <BrowserRouter>
+          <Suspense fallback={<LoadingSpinner />}>
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/financial-snapshot"
+                element={
+                  <ProtectedRoute>
+                    <FinancialSnapshot />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/financial-twin"
+                element={
+                  <ProtectedRoute>
+                    <FinancialTwinPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/burn-rate"
+                element={
+                  <ProtectedRoute>
+                    <BurnRatePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/financial-autopsy"
+                element={
+                  <ProtectedRoute>
+                    <FinancialAutopsyPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <ProfilePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </Suspense>
+        </BrowserRouter>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 
