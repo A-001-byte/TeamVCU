@@ -11,15 +11,19 @@ function Sidebar() {
   const currentYear = currentDate.getFullYear();
   
   // Get first day of month and number of days
-  const firstDay = new Date(currentYear, currentDate.getMonth(), 1).getDay();
+  // getDay() returns 0 (Sunday) to 6 (Saturday)
+  // We need to convert to Monday (0) to Sunday (6)
+  const firstDayOfMonth = new Date(currentYear, currentDate.getMonth(), 1).getDay();
+  const firstDayMonday = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1; // Convert Sunday (0) to 6, others -1
+  
   const daysInMonth = new Date(currentYear, currentDate.getMonth() + 1, 0).getDate();
   const daysInPrevMonth = new Date(currentYear, currentDate.getMonth(), 0).getDate();
   
   // Generate calendar days
   const calendarDays = [];
   
-  // Previous month days
-  for (let i = firstDay - 1; i >= 0; i--) {
+  // Previous month days (to fill before first day of current month)
+  for (let i = firstDayMonday - 1; i >= 0; i--) {
     calendarDays.push({ day: daysInPrevMonth - i, isCurrentMonth: false });
   }
   
@@ -32,7 +36,7 @@ function Sidebar() {
     });
   }
   
-  // Fill remaining days
+  // Fill remaining days to complete 6 weeks (42 days)
   const remainingDays = 42 - calendarDays.length;
   for (let i = 1; i <= remainingDays; i++) {
     calendarDays.push({ day: i, isCurrentMonth: false });
@@ -48,8 +52,8 @@ function Sidebar() {
         <div className="transactions-list">
           {RECENT_TRANSACTIONS.map((transaction, index) => (
             <div key={index} className="transaction-item">
-              <div className="transaction-icon" style={{ backgroundColor: `${transaction.color}20` }}>
-                <span>{transaction.icon}</span>
+              <div className="transaction-icon-wrapper">
+                <span className="transaction-icon-text">{transaction.icon}</span>
               </div>
               <div className="transaction-info">
                 <div className="transaction-name">{transaction.name}</div>
@@ -93,4 +97,3 @@ function Sidebar() {
 }
 
 export default Sidebar;
-

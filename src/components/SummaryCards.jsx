@@ -11,8 +11,10 @@ function SummaryCards() {
   return (
     <div className="summary-cards">
       <div className="summary-card" style={{ borderLeft: `4px solid ${expenses.color}` }}>
-        <div className="summary-icon" style={{ color: expenses.color }}>
-          {expenses.icon}
+        <div className="summary-icon-wrapper" style={{ backgroundColor: `${expenses.color}15` }}>
+          <span className="summary-icon-text" style={{ color: expenses.color }}>
+            {expenses.icon}
+          </span>
         </div>
         <div className="summary-content">
           <div className="summary-amount" style={{ color: expenses.color }}>
@@ -23,8 +25,10 @@ function SummaryCards() {
       </div>
 
       <div className="summary-card" style={{ borderLeft: `4px solid ${expenseRevenues.color}` }}>
-        <div className="summary-icon" style={{ color: expenseRevenues.color }}>
-          {expenseRevenues.icon}
+        <div className="summary-icon-wrapper" style={{ backgroundColor: `${expenseRevenues.color}15` }}>
+          <span className="summary-icon-text" style={{ color: expenseRevenues.color }}>
+            {expenseRevenues.icon}
+          </span>
         </div>
         <div className="summary-content">
           <div className="summary-amount" style={{ color: expenseRevenues.color }}>
@@ -35,8 +39,10 @@ function SummaryCards() {
       </div>
 
       <div className="summary-card" style={{ borderLeft: `4px solid ${revenues.color}` }}>
-        <div className="summary-icon" style={{ color: revenues.color }}>
-          {revenues.icon}
+        <div className="summary-icon-wrapper" style={{ backgroundColor: `${revenues.color}15` }}>
+          <span className="summary-icon-text" style={{ color: revenues.color }}>
+            {revenues.icon}
+          </span>
         </div>
         <div className="summary-content">
           <div className="summary-amount" style={{ color: revenues.color }}>
@@ -50,4 +56,3 @@ function SummaryCards() {
 }
 
 export default SummaryCards;
-

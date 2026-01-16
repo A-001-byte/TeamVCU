@@ -8,14 +8,13 @@ import { formatCurrency } from '../utils/formatters';
 
 function BudgetOverview() {
   const { spent, monthlyLimit, remaining } = BUDGET_DATA;
-  const percentage = (spent / monthlyLimit) * 100;
   
   const data = [
     { name: 'Spent', value: spent },
     { name: 'Remaining', value: remaining },
   ];
 
-  const COLORS = ['#f97316', '#e5e7eb'];
+  const COLORS = ['#2563eb', '#e5e7eb'];
 
   return (
     <div className="budget-overview-card">

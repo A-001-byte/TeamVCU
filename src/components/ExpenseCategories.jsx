@@ -12,12 +12,12 @@ function ExpenseCategories() {
       <div className="categories-grid">
         {EXPENSE_CATEGORIES.map((category, index) => (
           <div key={index} className="category-card">
-            <div className="category-icon" style={{ backgroundColor: `${category.color}20` }}>
-              <span style={{ fontSize: '24px' }}>{category.icon}</span>
+            <div className="category-icon-wrapper">
+              <span className="category-icon-text">{category.icon}</span>
             </div>
             <div className="category-info">
               <div className="category-name">{category.name}</div>
-              <div className="category-amount" style={{ color: category.color }}>
+              <div className="category-amount">
                 {formatCurrency(category.amount)}
               </div>
             </div>
@@ -29,4 +29,3 @@ function ExpenseCategories() {
 }
 
 export default ExpenseCategories;
-

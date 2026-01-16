@@ -33,7 +33,7 @@ function MonthlyExpenseChart() {
           />
           <Bar 
             dataKey="amount" 
-            fill="#3b82f6" 
+            fill="#2563eb" 
             radius={[8, 8, 0, 0]}
           />
         </BarChart>
