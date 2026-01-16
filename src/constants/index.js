@@ -34,8 +34,8 @@ export const ANIMATION_DURATION = {
 
 // Currency Configuration
 export const CURRENCY = {
-  SYMBOL: '₹',
-  LOCALE: 'en-IN',
+  SYMBOL: '$',
+  LOCALE: 'en-US',
 };
 
 // Chart Configuration
