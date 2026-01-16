@@ -1,3 +1,4 @@
+
 /**
  * Application Constants
  */
@@ -13,6 +14,8 @@ export const API_CONFIG = {
     EXPENSES: '/expenses',
     STATS: '/stats',
     TRANSACTIONS: '/transactions',
+    TAX_COMPLIANCE: '/tax-compliance',
+    CAs: '/cas',
   },
 };
 

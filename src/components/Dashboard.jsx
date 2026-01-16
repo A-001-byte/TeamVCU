@@ -256,6 +256,16 @@ export default function ThinkTwiceDashboard() {
                     Financial Autopsy
                   </motion.button>
                 </Link>
+                <Link to="/tax-compliance" className="text-decoration-none">
+                  <motion.button 
+                    className="nav-item"
+                    whileHover={{ x: 5 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Award size={20} />
+                    Tax Compliance
+                  </motion.button>
+                </Link>
                 <motion.button 
                   className="nav-item"
                   whileHover={{ x: 5 }}
