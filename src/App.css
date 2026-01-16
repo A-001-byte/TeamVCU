@@ -1,0 +1,72 @@
+/* App-specific styles */
+
+.ca-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.ca-card-large {
+  display: flex;
+  align-items: center;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #eee;
+  transition: box-shadow 0.3s ease;
+}
+
+.ca-card-large:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.ca-avatar-large {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-right: 20px;
+  object-fit: cover;
+}
+
+.ca-details {
+  flex-grow: 1;
+}
+
+.ca-name-large {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.ca-meta-large {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin: 10px 0;
+  color: #555;
+}
+
+.ca-meta-large span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ca-expertise-large {
+  margin: 10px 0;
+  font-size: 1rem;
+}
+
+.connect-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.connect-btn:hover {
+  background-color: #0056b3;
+}
