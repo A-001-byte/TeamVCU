@@ -1,20 +1,142 @@
-<<<<<<< HEAD
-# React + Vite
+# TEAMVCU Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, responsive financial dashboard built with React, Vite, and Framer Motion.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 📊 Interactive expense charts
+- 💰 Financial statistics overview
+- 🎨 Beautiful, modern UI with animations
+- 📱 Fully responsive design
+- 🔌 Backend-ready API integration (currently using mock data)
+- ⚡ Fast and optimized
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **React 19** - UI library
+- **Vite** - Build tool
+- **Framer Motion** - Animations
+- **Recharts** - Chart library
+- **PropTypes** - Type checking
 
-## Expanding the ESLint configuration
+## Project Structure
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-=======
-# Hackcrypt-VCU-
->>>>>>> ab8b4b0dfba974f30f9f71c1fd2e786b4b85024f
+```
+src/
+├── components/          # React components
+│   ├── Dashboard.jsx
+│   ├── StatCard.jsx
+│   ├── ExpenseChart.jsx
+│   ├── ErrorBoundary.jsx
+│   ├── LoadingSpinner.jsx
+│   └── ErrorMessage.jsx
+├── components/         # React components
+│   ├── Dashboard.jsx
+│   ├── StatCard.jsx
+│   ├── ExpenseChart.jsx
+│   ├── ErrorBoundary.jsx
+│   ├── LoadingSpinner.jsx
+│   └── ErrorMessage.jsx
+├── data/               # Mock data (for development)
+│   └── mockData.js
+├── services/           # API services (ready for backend)
+│   └── dashboardService.js
+├── hooks/              # Custom React hooks
+│   └── useDashboardData.js
+├── utils/              # Utility functions
+│   ├── api.js
+│   └── formatters.js
+├── constants/          # App constants
+│   └── index.js
+└── config/             # Configuration
+    └── env.js
+```
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+ 
+- npm or yarn
+
+### Installation
+
+1. Clone the repository
+2. Install dependencies:
+```bash
+npm install
+```
+
+**Note:** The app currently uses mock data and works without a backend. No environment setup required!
+
+### Development
+
+Run the development server:
+```bash
+npm run dev
+```
+
+### Build
+
+Build for production:
+```bash
+npm run build
+```
+
+### Preview
+
+Preview production build:
+```bash
+npm run preview
+```
+
+## Backend Integration
+
+**Current Status:** The app is currently using mock data from `src/data/mockData.js` and works without a backend connection.
+
+**To connect to a backend:**
+
+1. Update the API configuration in:
+   - `src/constants/index.js` - API endpoints
+   - `.env` - API base URL (create `.env` file)
+
+2. Uncomment the backend code in `src/hooks/useDashboardData.js`:
+   - Remove the mock data section
+   - Uncomment the backend API calls
+
+3. The app uses a service layer (`src/services/dashboardService.js`) that can be easily extended with new endpoints.
+
+### API Endpoints Expected
+
+- `GET /api/dashboard` - Dashboard overview data
+- `GET /api/expenses` - Expense data for charts
+- `GET /api/stats` - Financial statistics
+
+### Response Format
+
+```json
+{
+  "totalBalance": 342800,
+  "monthlySpend": 24350,
+  "savings": 58200,
+  "creditScore": 782,
+  "totalExpenses": 20210230,
+  "expenses": [
+    { "name": "Food", "value": 30 },
+    { "name": "Travel", "value": 22 }
+  ]
+}
+```
+
+## Adding New Features
+
+The codebase is structured for easy extension:
+
+1. **New Components**: Add to `src/components/`
+2. **New Services**: Add to `src/services/`
+3. **New Hooks**: Add to `src/hooks/`
+4. **New Utilities**: Add to `src/utils/`
+
+## License
+
+MIT
