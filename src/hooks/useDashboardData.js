@@ -8,8 +8,12 @@ import {
   MOCK_EXPENSE_DATA,
   MOCK_FINANCIAL_STATS,
   MOCK_DASHBOARD_DATA,
+  TRANSACTIONS,
   delay,
 } from '../data/mockData';
+import { buildFinancialTwin } from '../intelligence/financialTwin';
+import { calculateBurnRate } from '../intelligence/burnRate';
+import { runFinancialAutopsy } from '../intelligence/autopsyEngine';
 
 // Uncomment when ready to use backend:
 // import { getDashboardData, getExpenseData, getFinancialStats } from '../services/dashboardService';
@@ -23,9 +27,17 @@ export const useDashboardData = () => {
     stats: null,
     expenses: null,
     financialStats: null,
+    financialTwin: null,
+    burnRate: null,
+    autopsyReport: null,
+    savings: null,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Constants
+  const income = 50000;
+  const savings = 60000;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,6 +55,26 @@ export const useDashboardData = () => {
           expenses: MOCK_EXPENSE_DATA,
           financialStats: MOCK_FINANCIAL_STATS,
         });
+
+        // Transform transactions to expected format and compute intelligence metrics
+        const transactions = TRANSACTIONS.map(t => ({
+          id: t.id,
+          amount: t.isPositive ? t.amount : -Math.abs(t.amount),
+          merchant: t.name,
+          date: t.date,
+        }));
+
+        const financialTwin = buildFinancialTwin(transactions, income, savings);
+        const burnRate = calculateBurnRate(financialTwin.monthlyExpense, savings);
+        const autopsyReport = runFinancialAutopsy(transactions);
+
+        setData(prevData => ({
+          ...prevData,
+          financialTwin,
+          burnRate,
+          autopsyReport,
+          savings,
+        }));
 
         /* 
         // Backend integration (uncomment when ready):
@@ -67,6 +99,26 @@ export const useDashboardData = () => {
           expenses: MOCK_EXPENSE_DATA,
           financialStats: MOCK_FINANCIAL_STATS,
         });
+
+        // Transform transactions to expected format and compute intelligence metrics
+        const transactions = TRANSACTIONS.map(t => ({
+          id: t.id,
+          amount: t.isPositive ? t.amount : -Math.abs(t.amount),
+          merchant: t.name,
+          date: t.date,
+        }));
+
+        const financialTwin = buildFinancialTwin(transactions, income, savings);
+        const burnRate = calculateBurnRate(financialTwin.monthlyExpense, savings);
+        const autopsyReport = runFinancialAutopsy(transactions);
+
+        setData(prevData => ({
+          ...prevData,
+          financialTwin,
+          burnRate,
+          autopsyReport,
+          savings,
+        }));
       } finally {
         setLoading(false);
       }
@@ -83,6 +135,25 @@ export const useDashboardData = () => {
       expenses: MOCK_EXPENSE_DATA,
       financialStats: MOCK_FINANCIAL_STATS,
     });
+
+    // Transform transactions to expected format and compute intelligence metrics
+    const transactions = TRANSACTIONS.map(t => ({
+      id: t.id,
+      amount: t.isPositive ? t.amount : -Math.abs(t.amount),
+      merchant: t.name,
+      date: t.date,
+    }));
+
+    const financialTwin = buildFinancialTwin(transactions, income, savings);
+    const burnRate = calculateBurnRate(financialTwin.monthlyExpense, savings);
+    const autopsyReport = runFinancialAutopsy(transactions);
+
+    setData(prevData => ({
+      ...prevData,
+      financialTwin,
+      burnRate,
+      autopsyReport,
+    }));
     setLoading(false);
   };
 

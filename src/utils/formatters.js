@@ -12,15 +12,18 @@ import { CURRENCY } from '../constants';
  */
 export const formatCurrency = (amount, currency = CURRENCY.SYMBOL) => {
   if (amount === null || amount === undefined || isNaN(amount)) {
-    return `${currency}0`;
+    return `${currency} 0`;
   }
 
-  return new Intl.NumberFormat(CURRENCY.LOCALE, {
-    style: 'currency',
-    currency: 'INR',
+  // Format with space after currency symbol to match design
+  const formatted = new Intl.NumberFormat(CURRENCY.LOCALE, {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(amount).replace('INR', currency);
+  }).format(Math.abs(amount));
+  
+  // Handle negative amounts
+  const sign = amount < 0 ? '-' : '';
+  return `${sign}${currency} ${formatted}`;
 };
 
 /**
