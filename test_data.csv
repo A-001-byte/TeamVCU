@@ -1,0 +1,6 @@
+merchant,amount,type,category,mode
+Starbucks,5.50,debit,Food,card
+Uber,12.00,debit,Transport,card
+Salary,3000.00,credit,Income,bank
+Netflix,15.00,debit,Subscription,card
+Amazon,45.20,debit,Shopping,card
