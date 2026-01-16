@@ -1,0 +1,95 @@
+import { supabase } from '../supabaseClient';
+
+/**
+ * Checks if the user has crossed 80% of their monthly budget.
+ * Triggers UI alert + WhatsApp alert exactly once per month.
+ */
+export async function checkBudgetAlert(user) {
+  if (!user) return;
+
+  try {
+    /**
+     * 1. Fetch profile
+     */
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('monthly_budget, budget_alert_sent')
+      .eq('id', user.id)
+      .single();
+
+    if (profileError) {
+      console.error('Profile fetch error:', profileError);
+      return;
+    }
+
+    // Guard conditions
+    if (!profile?.monthly_budget) return;
+    if (profile.budget_alert_sent) return;
+
+    /**
+     * 2. Fetch monthly spend
+     */
+    const { data: spend, error: spendError } = await supabase
+      .from('monthly_spend')
+      .select('total_spent')
+      .eq('user_id', user.id)
+      .single();
+
+    if (spendError && spendError.code !== 'PGRST116') {
+      console.error('Spend fetch error:', spendError);
+      return;
+    }
+
+    const totalSpent = spend?.total_spent ?? 0;
+    if (totalSpent === 0) return;
+
+    /**
+     * 3. Calculate percentage
+     */
+    const percentUsed = totalSpent / profile.monthly_budget;
+
+    if (percentUsed < 0.8) return;
+
+    /**
+     * 4. Mark alert as sent FIRST (idempotency)
+     */
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({ budget_alert_sent: true })
+      .eq('id', user.id);
+
+    if (updateError) {
+      console.error('Failed to mark alert as sent:', updateError);
+      return;
+    }
+
+    /**
+     * 5. UI Alert
+     */
+    alert(
+      `⚠️ Budget Alert\n\nYou’ve used ${Math.round(
+        percentUsed * 100
+      )}% of your monthly budget.`
+    );
+
+    /**
+     * 6. WhatsApp Alert via Edge Function (non-blocking)
+     */
+    try {
+      const { error: fnError } = await supabase.functions.invoke(
+        'send-whatsapp-alert',
+        {
+          body: { percentUsed },
+        }
+      );
+
+      if (fnError) {
+        console.error('WhatsApp alert failed:', fnError);
+      }
+    } catch (e) {
+      console.error('Edge function error:', e);
+    }
+  } catch (e) {
+    console.error('Budget alert fatal error:', e);
+  }
+}
