@@ -10,11 +10,11 @@ import {
   CreditCard, PieChart, Bell, Search, Shield, 
   Award, Users, ArrowUpRight, ArrowDownRight, Brain, FileSearch, ArrowRight
 } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { CHART_DATA, TRANSACTIONS, STATS_DATA, TRUST_INDICATORS } from '../data/mockData';
 import { formatCurrency } from '../utils/formatters';
 import { useDashboardData } from '../hooks/useDashboardData';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function ThinkTwiceDashboard() {
@@ -216,7 +216,17 @@ export default function ThinkTwiceDashboard() {
                   <PieChart size={20} />
                   Analytics
                 </motion.button>
-                <Link to="/financial-twin" style={{ textDecoration: 'none' }}>
+                <Link to="/financial-snapshot" className="text-decoration-none">
+                  <motion.button 
+                    className="nav-item"
+                    whileHover={{ x: 5 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <PieChart size={20} />
+                    Financial Snapshot
+                  </motion.button>
+                </Link>
+                <Link to="/financial-twin" className="text-decoration-none">
                   <motion.button 
                     className="nav-item"
                     whileHover={{ x: 5 }}
@@ -226,7 +236,7 @@ export default function ThinkTwiceDashboard() {
                     Financial Twin
                   </motion.button>
                 </Link>
-                <Link to="/burn-rate" style={{ textDecoration: 'none' }}>
+                <Link to="/burn-rate" className="text-decoration-none">
                   <motion.button 
                     className="nav-item"
                     whileHover={{ x: 5 }}
@@ -236,7 +246,7 @@ export default function ThinkTwiceDashboard() {
                     Burn Rate
                   </motion.button>
                 </Link>
-                <Link to="/financial-autopsy" style={{ textDecoration: 'none' }}>
+                <Link to="/financial-autopsy" className="text-decoration-none">
                   <motion.button 
                     className="nav-item"
                     whileHover={{ x: 5 }}
@@ -392,7 +402,7 @@ export default function ThinkTwiceDashboard() {
             <div className="intelligence-grid">
               {/* Financial Twin Summary Card */}
               {financialTwin && (
-                <Link to="/financial-twin" style={{ textDecoration: 'none' }}>
+                <Link to="/financial-twin" className="text-decoration-none">
                   <motion.div
                     className="intelligence-card"
                     variants={card3DVariants}
@@ -425,7 +435,7 @@ export default function ThinkTwiceDashboard() {
 
               {/* Burn Rate Summary Card */}
               {burnRate && (
-                <Link to="/burn-rate" style={{ textDecoration: 'none' }}>
+                <Link to="/burn-rate" className="text-decoration-none">
                   <motion.div
                     className="intelligence-card"
                     variants={card3DVariants}
@@ -464,7 +474,7 @@ export default function ThinkTwiceDashboard() {
 
               {/* Financial Autopsy Summary Card */}
               {autopsyReport && (
-                <Link to="/financial-autopsy" style={{ textDecoration: 'none' }}>
+                <Link to="/financial-autopsy" className="text-decoration-none">
                   <motion.div
                     className="intelligence-card"
                     variants={card3DVariants}

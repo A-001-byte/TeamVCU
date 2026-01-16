@@ -1,7 +1,3 @@
-/**
- * Main App Component
- */
-
 import { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -11,6 +7,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import Dashboard from './components/Dashboard';
 import LoginPage from './pages/LoginPage';
 import ProfilePage from './pages/ProfilePage';
+import FinancialSnapshot from './pages/FinancialSnapshot';
 import FinancialTwinPage from './pages/FinancialTwinPage';
 import BurnRatePage from './pages/BurnRatePage';
 import FinancialAutopsyPage from './pages/FinancialAutopsyPage';
@@ -29,6 +26,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/financial-snapshot"
+                element={
+                  <ProtectedRoute>
+                    <FinancialSnapshot />
                   </ProtectedRoute>
                 }
               />
