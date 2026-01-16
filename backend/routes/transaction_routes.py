@@ -2,9 +2,10 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from extensions import db
 from models.transaction import Transaction
-import csv
 from utils.categorizer import auto_categorize
 
+import csv
+from openpyxl import load_workbook
 
 txn_bp = Blueprint("transactions", __name__)
 
@@ -21,8 +22,8 @@ def add_transaction():
         user_id=user_id,
         amount=data["amount"],
         txn_type=data["txn_type"],
-        category=data.get("category") or auto_categorize(data["merchant"]),
         merchant=data["merchant"],
+        category=data.get("category") or auto_categorize(data["merchant"]),
         mode=data["mode"],
         source="MANUAL"
     )
@@ -86,12 +87,14 @@ def upload_transactions():
             continue
 
         try:
+            merchant = row["merchant"]
+
             txn = Transaction(
                 user_id=user_id,
                 amount=float(row["amount"]),
                 txn_type=row["type"].upper(),
-                merchant=row["merchant"],
-                category=row.get("category", "Uncategorized"),
+                merchant=merchant,
+                category=row.get("category") or auto_categorize(merchant),
                 mode=row.get("mode", "UNKNOWN"),
                 source="CSV"
             )
@@ -104,6 +107,81 @@ def upload_transactions():
 
     return {
         "message": "CSV processed",
+        "created": created,
+        "failed": failed
+    }, 201
+
+
+# ------------------------
+# Excel Upload (.xlsx)
+# ------------------------
+@txn_bp.route("/upload-excel", methods=["POST"])
+@jwt_required()
+def upload_excel():
+    user_id = get_jwt_identity()
+
+    if "file" not in request.files:
+        return {"error": "Excel file is required"}, 400
+
+    file = request.files["file"]
+
+    if file.filename == "":
+        return {"error": "No selected file"}, 400
+
+    if not file.filename.endswith(".xlsx"):
+        return {"error": "Only .xlsx files are supported"}, 400
+
+    try:
+        workbook = load_workbook(file, data_only=True)
+        sheet = workbook.active
+    except Exception:
+        return {"error": "Invalid Excel file"}, 400
+
+    headers = [cell.value for cell in sheet[1]]
+    required_fields = {"amount", "type", "merchant", "mode"}
+
+    if not required_fields.issubset(set(headers)):
+        return {
+            "error": "Excel must contain headers: amount, type, merchant, mode"
+        }, 400
+
+    header_index = {header: idx for idx, header in enumerate(headers)}
+
+    created = 0
+    failed = 0
+
+    for row in sheet.iter_rows(min_row=2, values_only=True):
+        try:
+            amount = float(row[header_index["amount"]])
+            txn_type = row[header_index["type"]].upper()
+            merchant = row[header_index["merchant"]]
+            mode = row[header_index["mode"]]
+
+            category = (
+                row[header_index["category"]]
+                if "category" in header_index and row[header_index["category"]]
+                else auto_categorize(merchant)
+            )
+
+            txn = Transaction(
+                user_id=user_id,
+                amount=amount,
+                txn_type=txn_type,
+                merchant=merchant,
+                category=category,
+                mode=mode,
+                source="EXCEL"
+            )
+
+            db.session.add(txn)
+            created += 1
+        except Exception:
+            failed += 1
+
+    db.session.commit()
+
+    return {
+        "message": "Excel processed",
         "created": created,
         "failed": failed
     }, 201
