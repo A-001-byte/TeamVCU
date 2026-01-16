@@ -8,14 +8,19 @@ import {
   TrendingUp, TrendingDown, Wallet, ShoppingCart, 
   Utensils, Home, Plus, MoreVertical, Calendar, Settings, 
   CreditCard, PieChart, Bell, Search, Shield, 
-  Award, Users, ArrowUpRight, ArrowDownRight 
+  Award, Users, ArrowUpRight, ArrowDownRight, Brain, FileSearch, ArrowRight
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { CHART_DATA, TRANSACTIONS, STATS_DATA, TRUST_INDICATORS } from '../data/mockData';
 import { formatCurrency } from '../utils/formatters';
+import { useDashboardData } from '../hooks/useDashboardData';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function ThinkTwiceDashboard() {
   const [timeRange, setTimeRange] = useState('1month');
+  const { data } = useDashboardData();
+  const { financialTwin, burnRate, autopsyReport, savings } = data || {};
+  const location = useLocation();
   
   const chartData = CHART_DATA;
   const transactions = TRANSACTIONS.map(t => ({
@@ -189,6 +194,36 @@ export default function ThinkTwiceDashboard() {
                   <PieChart size={20} />
                   Analytics
                 </motion.button>
+                <Link to="/financial-twin" style={{ textDecoration: 'none' }}>
+                  <motion.button 
+                    className="nav-item"
+                    whileHover={{ x: 5 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Brain size={20} />
+                    Financial Twin
+                  </motion.button>
+                </Link>
+                <Link to="/burn-rate" style={{ textDecoration: 'none' }}>
+                  <motion.button 
+                    className="nav-item"
+                    whileHover={{ x: 5 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <TrendingUp size={20} />
+                    Burn Rate
+                  </motion.button>
+                </Link>
+                <Link to="/financial-autopsy" style={{ textDecoration: 'none' }}>
+                  <motion.button 
+                    className="nav-item"
+                    whileHover={{ x: 5 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <FileSearch size={20} />
+                    Financial Autopsy
+                  </motion.button>
+                </Link>
                 <motion.button 
                   className="nav-item"
                   whileHover={{ x: 5 }}
@@ -330,6 +365,114 @@ export default function ThinkTwiceDashboard() {
                 </LineChart>
               </ResponsiveContainer>
             </motion.div>
+
+            {/* Financial Intelligence Cards */}
+            <div className="intelligence-grid">
+              {/* Financial Twin Summary Card */}
+              {financialTwin && (
+                <Link to="/financial-twin" style={{ textDecoration: 'none' }}>
+                  <motion.div
+                    className="intelligence-card"
+                    variants={card3DVariants}
+                    initial="rest"
+                    whileHover="hover"
+                  >
+                    <div className="intelligence-header">
+                      <div className="intelligence-icon-wrapper" style={{ background: 'var(--accent-success)' }}>
+                        <Shield size={24} />
+                      </div>
+                      <ArrowRight size={20} className="intelligence-arrow" />
+                    </div>
+                    <h3 className="intelligence-title">Financial Twin</h3>
+                    <p className="intelligence-subtitle">AI-powered financial health assessment</p>
+                    <div className="intelligence-metrics">
+                      <div className="intelligence-metric">
+                        <span className="intelligence-metric-label">Stability Level</span>
+                        <span className="intelligence-metric-value">{financialTwin.risk || 'LOW'}</span>
+                      </div>
+                      <div className="intelligence-metric">
+                        <span className="intelligence-metric-label">Runway</span>
+                        <span className="intelligence-metric-value">
+                          {financialTwin.runwayMonths === Infinity ? '∞' : `${financialTwin.runwayMonths?.toFixed(1) || 0}m`}
+                        </span>
+                      </div>
+                    </div>
+                  </motion.div>
+                </Link>
+              )}
+
+              {/* Burn Rate Summary Card */}
+              {burnRate && (
+                <Link to="/burn-rate" style={{ textDecoration: 'none' }}>
+                  <motion.div
+                    className="intelligence-card"
+                    variants={card3DVariants}
+                    initial="rest"
+                    whileHover="hover"
+                  >
+                    <div className="intelligence-header">
+                      <div className="intelligence-icon-wrapper" style={{ background: 'var(--accent-primary)' }}>
+                        <TrendingUp size={24} />
+                      </div>
+                      <ArrowRight size={20} className="intelligence-arrow" />
+                    </div>
+                    <h3 className="intelligence-title">Burn Rate</h3>
+                    <p className="intelligence-subtitle">Time until savings depletion</p>
+                    <div className="intelligence-metrics">
+                      <div className="intelligence-metric">
+                        <span className="intelligence-metric-label">Months Left</span>
+                        <span className="intelligence-metric-value">{burnRate.monthsLeft?.toFixed(1) || '0'}</span>
+                      </div>
+                      <div className="intelligence-metric">
+                        <span className="intelligence-metric-label">Runway Status</span>
+                        <span 
+                          className="intelligence-metric-value"
+                          style={{
+                            color: burnRate.warning === 'Critical' ? 'var(--accent-danger)' :
+                                   burnRate.warning === 'Caution' ? '#d97706' : 'var(--accent-success)'
+                          }}
+                        >
+                          {burnRate.warning || 'Safe'}
+                        </span>
+                      </div>
+                    </div>
+                  </motion.div>
+                </Link>
+              )}
+
+              {/* Financial Autopsy Summary Card */}
+              {autopsyReport && (
+                <Link to="/financial-autopsy" style={{ textDecoration: 'none' }}>
+                  <motion.div
+                    className="intelligence-card"
+                    variants={card3DVariants}
+                    initial="rest"
+                    whileHover="hover"
+                  >
+                    <div className="intelligence-header">
+                      <div className="intelligence-icon-wrapper" style={{ background: 'var(--accent-purple)' }}>
+                        <FileSearch size={24} />
+                      </div>
+                      <ArrowRight size={20} className="intelligence-arrow" />
+                    </div>
+                    <h3 className="intelligence-title">Financial Autopsy</h3>
+                    <p className="intelligence-subtitle">Top 5 high-impact expenses</p>
+                    <div className="intelligence-metrics">
+                      <div className="intelligence-metric">
+                        <span className="intelligence-metric-label">Expenses Analyzed</span>
+                        <span className="intelligence-metric-value">{autopsyReport.length}</span>
+                      </div>
+                      <div className="intelligence-metric">
+                        <span className="intelligence-metric-label">Top Expense</span>
+                        <span className="intelligence-metric-value" style={{ fontSize: '0.75rem' }}>
+                          {autopsyReport[0]?.merchant || 'N/A'}
+                        </span>
+                      </div>
+                    </div>
+                  </motion.div>
+                </Link>
+              )}
+            </div>
           </main>
 
           {/* Right Sidebar */}
@@ -391,6 +534,30 @@ export default function ThinkTwiceDashboard() {
           </motion.aside>
         </motion.div>
       </div>
+
+      {/* Bottom Navigation Bar (Mobile Only) */}
+      <nav className="bottom-nav">
+        <Link to="/" className={`bottom-nav-item ${location.pathname === '/' ? 'active' : ''}`}>
+          <Home size={20} />
+          <span>Dashboard</span>
+        </Link>
+        <Link to="/financial-twin" className={`bottom-nav-item ${location.pathname === '/financial-twin' ? 'active' : ''}`}>
+          <Shield size={20} />
+          <span>Twin</span>
+        </Link>
+        <Link to="/burn-rate" className={`bottom-nav-item ${location.pathname === '/burn-rate' ? 'active' : ''}`}>
+          <TrendingUp size={20} />
+          <span>Burn Rate</span>
+        </Link>
+        <Link to="/financial-autopsy" className={`bottom-nav-item ${location.pathname === '/financial-autopsy' ? 'active' : ''}`}>
+          <FileSearch size={20} />
+          <span>Autopsy</span>
+        </Link>
+        <button className="bottom-nav-item">
+          <Settings size={20} />
+          <span>More</span>
+        </button>
+      </nav>
     </div>
   );
 }
