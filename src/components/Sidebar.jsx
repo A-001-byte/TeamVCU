@@ -54,6 +54,9 @@ function Sidebar() {
             <li>
               <Link to="/financial-snapshot">Financial Snapshot</Link>
             </li>
+            <li>
+              <Link to="/tax-compliance">Tax Compliance</Link>
+            </li>
           </ul>
         </nav>
       </div>

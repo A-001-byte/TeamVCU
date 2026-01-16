@@ -11,6 +11,8 @@ import FinancialSnapshot from './pages/FinancialSnapshot';
 import FinancialTwinPage from './pages/FinancialTwinPage';
 import BurnRatePage from './pages/BurnRatePage';
 import FinancialAutopsyPage from './pages/FinancialAutopsyPage';
+import TaxCompliance from './pages/TaxCompliance';
+import FindCaPage from './pages/FindCaPage';
 import './App.css';
 
 function App() {
@@ -66,6 +68,22 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <ProfilePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/tax-compliance"
+                element={
+                  <ProtectedRoute>
+                    <TaxCompliance />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/find-ca"
+                element={
+                  <ProtectedRoute>
+                    <FindCaPage />
                   </ProtectedRoute>
                 }
               />
