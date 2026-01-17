@@ -21,7 +21,7 @@ if (!isSupabaseConfigured()) {
 // Create Supabase client only if configured, otherwise use minimal config
 export const supabase = createClient(
   SUPABASE_URL || 'https://placeholder.supabase.co',
-  SUPABASE_ANON_KEY || 'placeholder-key',
+  SUPABASE_ANON_KEY || 'plac',
   {
     auth: {
       persistSession: isSupabaseConfigured(),
