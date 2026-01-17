@@ -1,7 +1,9 @@
 import React from 'react';
 import './FinancialSnapshot.css';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { Lightbulb } from 'lucide-react';
+import { Lightbulb, Loader, AlertTriangle } from 'lucide-react';
+import { useDashboardData } from '../hooks/useDashboardData';
+import { Link } from 'react-router-dom';
 
 const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amount);
@@ -56,33 +58,53 @@ const FinancialHealthTips = ({ income, expenses, savingsRate, expenseCategories 
 };
 
 export default function FinancialSnapshot() {
-    const income = 85000;
-    const expenses = 52400;
-    const netBalance = income - expenses;
-    const totalEmi = 18500;
-    const savingsAmount = 14100;
-    const savingsRate = 16.6;
+    const { data, loading, error } = useDashboardData();
+    
+    if (loading) {
+        return (
+            <div className="page-container centered">
+                <Loader className="animate-spin" size={48} />
+                <p>Loading financial snapshot...</p>
+            </div>
+        );
+    }
 
-    const primaryIncomeSources = [
-        { name: "Salary", amount: 60000 },
-        { name: "Freelance Projects", amount: 15000 },
-        { name: "Investment Returns", amount: 5000 },
-        { name: "Rental Income", amount: 5000 },
-    ];
+    if (error) {
+        return (
+            <div className="page-container centered">
+                <AlertTriangle size={48} className="text-red-500" />
+                <p className="error-message">{error}</p>
+                <Link to="/dashboard" className="back-button">Back to Dashboard</Link>
+            </div>
+        );
+    }
 
-    const expenseCategories = [
-        { name: "Entertainment", amount: 6800 },
-        { name: "Food & Dining", amount: 18500 },
-        { name: "Shopping", amount: 12400 },
-        { name: "Transportation", amount: 8500 },
-        { name: "Utilities", amount: 6200 },
-    ];
+    const transactions = data?.transactions || [];
+    const totalIncome = data?.totalIncome || 0;
+    const totalExpenses = data?.totalExpenses || 0;
+    const netBalance = totalIncome - totalExpenses;
+    const savingsAmount = totalIncome > 0 ? totalIncome : 0;
+    const savingsRate = totalIncome > 0 ? ((netBalance / totalIncome) * 100).toFixed(1) : 0;
 
-    const emiObligations = [
-        { name: "Home Loan", amount: 12000 },
-        { name: "Car Loan", amount: 4500 },
-        { name: "Credit Card", amount: 2000 },
-    ];
+    // Group expenses by category
+    const expenseCategoriesMap = {};
+    transactions
+        .filter(t => t.txn_type?.toUpperCase() === 'DEBIT')
+        .forEach(t => {
+            const category = t.category || 'Other';
+            expenseCategoriesMap[category] = (expenseCategoriesMap[category] || 0) + t.amount;
+        });
+    
+    const expenseCategories = Object.entries(expenseCategoriesMap)
+        .map(([name, amount]) => ({ name, amount }))
+        .sort((a, b) => b.amount - a.amount);
+
+    // Group income by category (if available)
+    const primaryIncomeSources = transactions
+        .filter(t => t.txn_type?.toUpperCase() === 'CREDIT')
+        .map(t => ({ name: t.merchant, amount: t.amount }));
+
+    const emiObligations = [];  // Can be expanded with bill data later
 
     return (
         <div className="financial-snapshot-page">
@@ -94,7 +116,7 @@ export default function FinancialSnapshot() {
                 {/* Cards will be refactored into components later */}
                 <div className="summary-card income-card">
                     <h3>Income Summary</h3>
-                    <h2>{formatCurrency(income)}</h2>
+                    <h2>{formatCurrency(totalIncome)}</h2>
                     <ul>
                         {primaryIncomeSources.map(s => <li key={s.name}><span>{s.name}</span> <span>{formatCurrency(s.amount)}</span></li>)}
                     </ul>
@@ -102,7 +124,7 @@ export default function FinancialSnapshot() {
 
                 <div className="summary-card expense-card">
                     <h3>Expense Summary</h3>
-                    <h2>{formatCurrency(expenses)}</h2>
+                    <h2>{formatCurrency(totalExpenses)}</h2>
                     <p>An overview of your monthly spending.</p>
                 </div>
 
@@ -125,7 +147,7 @@ export default function FinancialSnapshot() {
                                 </PieChart>
                             </ResponsiveContainer>
                             <div className="chart-center-text">
-                                <div className="chart-total-amount">{formatCurrency(expenses)}</div>
+                                <div className="chart-total-amount">{formatCurrency(totalExpenses)}</div>
                                 <div className="chart-total-label">Total Expenses</div>
                             </div>
                         </div>
@@ -135,13 +157,15 @@ export default function FinancialSnapshot() {
                     </div>
                 </div>
 
-                <div className="summary-card emi-card">
-                    <h3>EMI Summary</h3>
-                    <h2>{formatCurrency(totalEmi)}</h2>
-                    <ul>
-                        {emiObligations.map(emi => <li key={emi.name}><span>{emi.name}</span> <span>{formatCurrency(emi.amount)}</span></li>)}
-                    </ul>
-                </div>
+                {emiObligations.length > 0 && (
+                    <div className="summary-card emi-card">
+                        <h3>EMI Summary</h3>
+                        <h2>{formatCurrency(emiObligations.reduce((sum, e) => sum + e.amount, 0))}</h2>
+                        <ul>
+                            {emiObligations.map(emi => <li key={emi.name}><span>{emi.name}</span> <span>{formatCurrency(emi.amount)}</span></li>)}
+                        </ul>
+                    </div>
+                )}
 
                 <div className="summary-card savings-card">
                     <h3>Savings Snapshot</h3>
@@ -149,7 +173,7 @@ export default function FinancialSnapshot() {
                     <p>Savings Rate: <span className='savings-rate'>{savingsRate}%</span></p>
                 </div>
 
-                <FinancialHealthTips income={income} expenses={expenses} savingsRate={savingsRate} expenseCategories={expenseCategories} />
+                <FinancialHealthTips income={totalIncome} expenses={totalExpenses} savingsRate={savingsRate} expenseCategories={expenseCategories} />
             </div>
         </div>
     );

@@ -1,7 +1,7 @@
 /**
  * Dashboard Component - ThinkTwice Dashboard with 3D animations
  */
-
+import CsvUploadButton from './CsvUploadButton';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -11,19 +11,20 @@ import {
   Award, Users, ArrowUpRight, ArrowDownRight, Brain, FileSearch, ArrowRight
 } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { CHART_DATA, TRANSACTIONS, STATS_DATA, TRUST_INDICATORS } from '../data/mockData';
+import { PieChart as RechartsPI, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { formatCurrency } from '../utils/formatters';
 import { useDashboardData } from '../hooks/useDashboardData';
 import { useAuth } from '../contexts/AuthContext';
 
+
 export default function ThinkTwiceDashboard() {
   const [timeRange, setTimeRange] = useState('1month');
-  const { data } = useDashboardData();
+  const { data, refetch } = useDashboardData();
   const { financialTwin, burnRate, autopsyReport, savings } = data || {};
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
+
 
   // Get user initials for avatar
   const getUserInitials = (name) => {
@@ -35,30 +36,61 @@ export default function ThinkTwiceDashboard() {
       .toUpperCase()
       .slice(0, 2);
   };
-
+  
   // Get user's first name for greeting
   const getUserFirstName = (name) => {
     if (!name) return 'User';
     return name.split(' ')[0];
   };
   
-  const chartData = CHART_DATA;
-  const transactions = TRANSACTIONS.map(t => ({
+  // Use fetched transactions from hook
+  const transactionList = data?.transactions || [];
+  const totalExpenses = data?.totalExpenses || 0;
+  const totalIncome = data?.totalIncome || 0;
+  
+  const transactions = transactionList.map(t => ({
     ...t,
-    icon: t.category === 'food' ? Utensils : t.category === 'payment' ? Wallet : Home
+    icon: t.category === 'Food' ? Utensils : t.category === 'Transport' ? ShoppingCart : t.category === 'Subscription' ? Home : Wallet
   }));
-  const stats = STATS_DATA.map(s => ({
-    ...s,
-    icon: s.label === 'Total Balance' ? Wallet : s.label === 'Total Expenses' ? ShoppingCart : TrendingUp
-  }));
-  const trustIndicators = TRUST_INDICATORS.map((t, i) => ({
-    ...t,
-    icon: i === 0 ? Shield : i === 1 ? Users : Award
-  }));
+  
+  // Calculate stats from real data
+  const stats = [
+    { 
+      label: 'Total Balance', 
+      amount: totalIncome - totalExpenses, 
+      trend: '+12.5%', 
+      isPositive: true, 
+      bgColor: 'emerald',
+      icon: Wallet 
+    },
+    { 
+      label: 'Total Expenses', 
+      amount: totalExpenses, 
+      trend: '-8.2%', 
+      isPositive: false, 
+      bgColor: 'rose',
+      icon: ShoppingCart 
+    },
+    { 
+      label: 'Total Saved', 
+      amount: totalIncome, 
+      trend: '+5.1%', 
+      isPositive: true, 
+      bgColor: 'blue',
+      icon: TrendingUp 
+    }
+  ];
+  
+  const trustIndicators = [
+    { text: 'Bank-grade Security', subtext: 'ISO 27001 Certified', icon: Shield },
+    { text: '2M+ Happy Users', subtext: 'Across India', icon: Users },
+    { text: '4.8★ Rating', subtext: 'Google Play & App Store', icon: Award }
+  ];
+
 
   const card3DVariants = {
     rest: { 
-      rotateX: 0, 
+      rotateX: 0,
       rotateY: 0,
       scale: 1,
       transition: { duration: 0.3 }
@@ -71,6 +103,7 @@ export default function ThinkTwiceDashboard() {
     }
   };
 
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -81,6 +114,7 @@ export default function ThinkTwiceDashboard() {
     }
   };
 
+
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -89,6 +123,7 @@ export default function ThinkTwiceDashboard() {
       transition: { duration: 0.5 }
     }
   };
+
 
   return (
     <div className="thinktwice-dashboard">
@@ -138,6 +173,7 @@ export default function ThinkTwiceDashboard() {
             </div>
           </div>
 
+
           <div className="header-right-section">
             <div className="search-wrapper">
               <Search className="search-icon" size={16} />
@@ -171,6 +207,7 @@ export default function ThinkTwiceDashboard() {
           </div>
         </div>
       </motion.div>
+
 
       <div className="dashboard-content">
         <motion.div 
@@ -285,6 +322,7 @@ export default function ThinkTwiceDashboard() {
               </nav>
             </div>
 
+
             {/* Security Badge */}
             <motion.div 
               className="security-badge"
@@ -301,6 +339,7 @@ export default function ThinkTwiceDashboard() {
               </div>
             </motion.div>
           </motion.aside>
+
 
           {/* Main Content */}
           <main className="dashboard-main">
@@ -338,6 +377,7 @@ export default function ThinkTwiceDashboard() {
               ))}
             </div>
 
+
             {/* Chart Card */}
             <motion.div 
               className="chart-card"
@@ -365,48 +405,98 @@ export default function ThinkTwiceDashboard() {
                 </div>
               </div>
               
-              <div className="chart-legend">
-                <div className="legend-item">
-                  <div className="legend-dot food"></div>
-                  <span>Food & Drinks</span>
-                </div>
-                <div className="legend-item">
-                  <div className="legend-dot shopping"></div>
-                  <span>Shopping</span>
-                </div>
+              <div className="chart-legend" style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', marginBottom: '1.5rem', justifyContent: 'center' }}>
+                {(() => {
+                  const categoryData = {};
+                  transactionList
+                    .filter(t => t.txn_type?.toUpperCase() === 'DEBIT')
+                    .forEach(t => {
+                      const cat = t.category || 'Other';
+                      categoryData[cat] = (categoryData[cat] || 0) + (t.amount || 0);
+                    });
+                  const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B88B', '#52C9A4'];
+                  return Object.keys(categoryData).map((cat, index) => (
+                    <div key={cat} className="legend-item" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <div className="legend-dot" style={{ 
+                        backgroundColor: colors[index % colors.length],
+                        width: '12px',
+                        height: '12px',
+                        borderRadius: '50%',
+                        boxShadow: `0 2px 8px ${colors[index % colors.length]}40`
+                      }}></div>
+                      <span style={{ fontWeight: '600', color: '#1f2937', fontSize: '0.9rem' }}>{cat}</span>
+                    </div>
+                  ));
+                })()}
               </div>
 
-              <ResponsiveContainer width="100%" height={340}>
-                <LineChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis dataKey="date" stroke="#6b7280" style={{ fontSize: '13px', fontWeight: '500' }} />
-                  <YAxis stroke="#6b7280" style={{ fontSize: '13px', fontWeight: '500' }} />
+              <ResponsiveContainer width="100%" height={380}>
+                <RechartsPI data={transactionList.length > 0 ? (() => {
+                  const categoryData = {};
+                  transactionList
+                    .filter(t => t.txn_type?.toUpperCase() === 'DEBIT')
+                    .forEach(t => {
+                      const cat = t.category || 'Other';
+                      categoryData[cat] = (categoryData[cat] || 0) + (t.amount || 0);
+                    });
+                  return Object.entries(categoryData).map(([name, value]) => ({ name, value: Math.abs(value) }));
+                })() : [{name: 'No expenses', value: 1}]}>
+                  <Pie 
+                    data={transactionList.length > 0 ? (() => {
+                      const categoryData = {};
+                      transactionList
+                        .filter(t => t.txn_type?.toUpperCase() === 'DEBIT')
+                        .forEach(t => {
+                          const cat = t.category || 'Other';
+                          categoryData[cat] = (categoryData[cat] || 0) + (t.amount || 0);
+                        });
+                      return Object.entries(categoryData).map(([name, value]) => ({ name, value: Math.abs(value) }));
+                    })() : [{name: 'No expenses', value: 1}]}
+                    cx="50%" 
+                    cy="50%" 
+                    labelLine={true}
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    outerRadius={110}
+                    innerRadius={50}
+                    fill="#8884d8"
+                    dataKey="value"
+                    paddingAngle={2}
+                  >
+                    {transactionList.length > 0 ? (() => {
+                      const categoryData = {};
+                      transactionList
+                        .filter(t => t.txn_type?.toUpperCase() === 'DEBIT')
+                        .forEach(t => {
+                          const cat = t.category || 'Other';
+                          categoryData[cat] = (categoryData[cat] || 0) + (t.amount || 0);
+                        });
+                      const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B88B', '#52C9A4'];
+                      const total = Object.values(categoryData).reduce((sum, val) => sum + val, 0);
+                      return Object.keys(categoryData).map((_, index) => (
+                        <Cell 
+                          key={`cell-${index}`} 
+                          fill={colors[index % colors.length]}
+                          style={{ filter: 'drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15))' }}
+                        />
+                      ));
+                    })() : <Cell fill="#d1d5db" />}
+                  </Pie>
                   <Tooltip 
+                    formatter={(value) => formatCurrency(value)}
                     contentStyle={{ 
-                      backgroundColor: 'white', 
+                      backgroundColor: '#fff',
                       border: 'none',
                       borderRadius: '12px', 
-                      boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
-                      padding: '12px'
+                      boxShadow: '0 12px 24px rgba(0,0,0,0.2)',
+                      padding: '12px 16px',
+                      fontSize: '0.875rem',
+                      fontWeight: '600'
                     }} 
                   />
-                  <Line 
-                    type="monotone" 
-                    dataKey="food" 
-                    stroke="#f59e0b" 
-                    strokeWidth={3} 
-                    dot={{ r: 6, fill: '#f59e0b', strokeWidth: 2, stroke: '#fff' }} 
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="shopping" 
-                    stroke="#3b82f6" 
-                    strokeWidth={3} 
-                    dot={{ r: 6, fill: '#3b82f6', strokeWidth: 2, stroke: '#fff' }} 
-                  />
-                </LineChart>
+                </RechartsPI>
               </ResponsiveContainer>
             </motion.div>
+
 
             {/* Financial Intelligence Cards */}
             <div className="intelligence-grid">
@@ -442,6 +532,7 @@ export default function ThinkTwiceDashboard() {
                   </motion.div>
                 </Link>
               )}
+
 
               {/* Burn Rate Summary Card */}
               {burnRate && (
@@ -482,6 +573,7 @@ export default function ThinkTwiceDashboard() {
                 </Link>
               )}
 
+
               {/* Financial Autopsy Summary Card */}
               {autopsyReport && (
                 <Link to="/financial-autopsy" className="text-decoration-none">
@@ -516,6 +608,7 @@ export default function ThinkTwiceDashboard() {
               )}
             </div>
           </main>
+
 
           {/* Right Sidebar */}
           <motion.aside className="dashboard-right-sidebar" variants={itemVariants}>
@@ -559,6 +652,11 @@ export default function ThinkTwiceDashboard() {
                 ))}
               </div>
 
+              {/* CSV Upload Section */}
+              <div className="upload-section" style={{ marginBottom: '1rem' }}>
+                <CsvUploadButton onUploadSuccess={refetch} />
+              </div>
+
               <motion.button 
                 className="add-transaction-btn"
                 whileHover={{ scale: 1.02, y: -2 }}
@@ -568,6 +666,7 @@ export default function ThinkTwiceDashboard() {
                 Add New Transaction
               </motion.button>
 
+
               <div className="missing-transaction-banner">
                 <p className="banner-title">Missing Transaction?</p>
                 <p className="banner-text">Track all your expenses in one place with automated categorization</p>
@@ -576,6 +675,7 @@ export default function ThinkTwiceDashboard() {
           </motion.aside>
         </motion.div>
       </div>
+
 
       {/* Bottom Navigation Bar (Mobile Only) */}
       <nav className="bottom-nav">

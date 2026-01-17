@@ -1,22 +1,19 @@
 /**
  * Custom hook for dashboard data
- * Currently uses mock data - ready for backend integration
+ * Fetches transactions from backend
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   MOCK_EXPENSE_DATA,
   MOCK_FINANCIAL_STATS,
   MOCK_DASHBOARD_DATA,
-  TRANSACTIONS,
   delay,
 } from '../data/mockData';
 import { buildFinancialTwin } from '../intelligence/financialTwin';
 import { calculateBurnRate } from '../intelligence/burnRate';
 import { runFinancialAutopsy } from '../intelligence/autopsyEngine';
-
-// Uncomment when ready to use backend:
-// import { getDashboardData, getExpenseData, getFinancialStats } from '../services/dashboardService';
+import { apiClient } from '../utils/api';
 
 /**
  * Hook to fetch and manage dashboard data
@@ -39,122 +36,81 @@ export const useDashboardData = () => {
   const income = 50000;
   const savings = 60000;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  const fetchAndProcessTransactions = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        // Simulate API delay for realistic loading state
-        await delay(800);
+      // Fetch transactions from backend
+      const response = await apiClient.get('/transactions');
+      const backendTransactions = response || [];
+      
+      console.log('Fetched transactions:', backendTransactions);
 
-        // Using mock data (no backend connection)
-        // When ready to connect backend, uncomment the code below and remove mock data
-        setData({
-          stats: MOCK_DASHBOARD_DATA,
-          expenses: MOCK_EXPENSE_DATA,
-          financialStats: MOCK_FINANCIAL_STATS,
-        });
+      // Transform backend transactions to expected format
+      const transactions = backendTransactions.map(t => ({
+        id: t.id || Math.random(),
+        amount: t.txn_type?.toUpperCase() === 'DEBIT' ? -t.amount : t.amount,  // Negate debits for calculations
+        txn_type: t.txn_type,
+        merchant: t.merchant,
+        category: t.category,
+        date: t.date || new Date().toLocaleDateString(),
+      }));
+      
+      console.log('Processed transactions:', transactions);
 
-        // Transform transactions to expected format and compute intelligence metrics
-        const transactions = TRANSACTIONS.map(t => ({
-          id: t.id,
-          amount: t.isPositive ? t.amount : -Math.abs(t.amount),
-          merchant: t.name,
-          date: t.date,
-        }));
+      // Calculate actual expenses from transactions
+      const totalExpenses = transactions
+        .filter(t => t.txn_type?.toUpperCase() === 'DEBIT')
+        .reduce((sum, t) => sum + t.amount, 0);
+      
+      const totalIncome = transactions
+        .filter(t => t.txn_type?.toUpperCase() === 'CREDIT')
+        .reduce((sum, t) => sum + t.amount, 0);
+      
+      const actualBalance = totalIncome - totalExpenses;
 
-        const financialTwin = buildFinancialTwin(transactions, income, savings);
-        const burnRate = calculateBurnRate(financialTwin.monthlyExpense, savings);
-        const autopsyReport = runFinancialAutopsy(transactions);
+      // Compute intelligence metrics
+      const financialTwin = buildFinancialTwin(transactions, totalIncome || income, actualBalance || savings);
+      const burnRate = calculateBurnRate(totalExpenses || financialTwin.monthlyExpense, actualBalance || savings);
+      const autopsyReport = runFinancialAutopsy(transactions);
 
-        setData(prevData => ({
-          ...prevData,
-          financialTwin,
-          burnRate,
-          autopsyReport,
-          savings,
-        }));
-
-        /* 
-        // Backend integration (uncomment when ready):
-        const [dashboardData, expenseData, financialStats] = await Promise.all([
-          getDashboardData().catch(() => null),
-          getExpenseData().catch(() => null),
-          getFinancialStats().catch(() => null),
-        ]);
-
-        setData({
-          stats: dashboardData || MOCK_DASHBOARD_DATA,
-          expenses: expenseData || MOCK_EXPENSE_DATA,
-          financialStats: financialStats || MOCK_FINANCIAL_STATS,
-        });
-        */
-      } catch (err) {
-        setError(err.message || 'Failed to load dashboard data');
-        console.error('Error in useDashboardData:', err);
-        // Fallback to mock data on error
-        setData({
-          stats: MOCK_DASHBOARD_DATA,
-          expenses: MOCK_EXPENSE_DATA,
-          financialStats: MOCK_FINANCIAL_STATS,
-        });
-
-        // Transform transactions to expected format and compute intelligence metrics
-        const transactions = TRANSACTIONS.map(t => ({
-          id: t.id,
-          amount: t.isPositive ? t.amount : -Math.abs(t.amount),
-          merchant: t.name,
-          date: t.date,
-        }));
-
-        const financialTwin = buildFinancialTwin(transactions, income, savings);
-        const burnRate = calculateBurnRate(financialTwin.monthlyExpense, savings);
-        const autopsyReport = runFinancialAutopsy(transactions);
-
-        setData(prevData => ({
-          ...prevData,
-          financialTwin,
-          burnRate,
-          autopsyReport,
-          savings,
-        }));
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+      setData({
+        stats: MOCK_DASHBOARD_DATA,
+        expenses: MOCK_EXPENSE_DATA,
+        financialStats: MOCK_FINANCIAL_STATS,
+        financialTwin,
+        burnRate,
+        autopsyReport,
+        savings: actualBalance,
+        transactions,
+        totalExpenses,
+        totalIncome,
+      });
+      console.log('Dashboard data updated with transactions', { totalExpenses, totalIncome, actualBalance, burnRate });
+    } catch (err) {
+      console.error('Error fetching transactions:', err);
+      setError(err.message || 'Failed to load dashboard data');
+      
+      // Fallback to empty transactions
+      setData(prevData => ({
+        ...prevData,
+        stats: MOCK_DASHBOARD_DATA,
+        expenses: MOCK_EXPENSE_DATA,
+        financialStats: MOCK_FINANCIAL_STATS,
+        transactions: [],
+      }));
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
+  useEffect(() => {
+    fetchAndProcessTransactions();
+  }, [fetchAndProcessTransactions]);
+
   const refetch = async () => {
-    setLoading(true);
-    await delay(500);
-    setData({
-      stats: MOCK_DASHBOARD_DATA,
-      expenses: MOCK_EXPENSE_DATA,
-      financialStats: MOCK_FINANCIAL_STATS,
-    });
-
-    // Transform transactions to expected format and compute intelligence metrics
-    const transactions = TRANSACTIONS.map(t => ({
-      id: t.id,
-      amount: t.isPositive ? t.amount : -Math.abs(t.amount),
-      merchant: t.name,
-      date: t.date,
-    }));
-
-    const financialTwin = buildFinancialTwin(transactions, income, savings);
-    const burnRate = calculateBurnRate(financialTwin.monthlyExpense, savings);
-    const autopsyReport = runFinancialAutopsy(transactions);
-
-    setData(prevData => ({
-      ...prevData,
-      financialTwin,
-      burnRate,
-      autopsyReport,
-    }));
-    setLoading(false);
+    await fetchAndProcessTransactions();
   };
 
   return { data, loading, error, refetch };
