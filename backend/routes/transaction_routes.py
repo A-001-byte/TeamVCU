@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from extensions import db
-from models.transaction import Transaction
-from utils.categorizer import auto_categorize
+from ..extensions import db
+from ..models.transaction import Transaction
+from ..utils.categorizer import auto_categorize
 
 import csv
 from openpyxl import load_workbook
@@ -37,17 +37,20 @@ def add_transaction():
 # ------------------------
 # Fetch Transactions
 # ------------------------
-@txn_bp.route("/", methods=["GET"])
-@jwt_required()
+@txn_bp.route("", methods=["GET"])
 def get_transactions():
-    user_id = get_jwt_identity()
+    # Use test user for now
+    user_id = "test-user-123"
     txns = Transaction.query.filter_by(user_id=user_id).all()
 
     return jsonify([
         {
+            "id": t.id,
             "amount": t.amount,
             "category": t.category,
             "merchant": t.merchant,
+            "txn_type": t.txn_type,
+            "date": t.txn_date.isoformat() if t.txn_date else None,
             "source": t.source
         }
         for t in txns
@@ -58,67 +61,74 @@ def get_transactions():
 # CSV Upload
 # ------------------------
 @txn_bp.route("/upload", methods=["POST"])
-@jwt_required()
 def upload_transactions():
-    user_id = get_jwt_identity()
+    # Generate a test user_id for now (testing without auth)
+    user_id = "test-user-123"
 
-    if "file" not in request.files:
-        return {"error": "CSV file is required"}, 400
+    try:
+        if "file" not in request.files:
+            return {"error": "CSV file is required"}, 400
 
-    file = request.files["file"]
+        file = request.files["file"]
 
-    if file.filename == "":
-        return {"error": "No selected file"}, 400
+        if file.filename == "":
+            return {"error": "No selected file"}, 400
 
-    if not file.filename.endswith(".csv"):
-        return {"error": "Only CSV files allowed"}, 400
+        if not file.filename.endswith(".csv"):
+            return {"error": "Only CSV files allowed"}, 400
 
-    stream = file.stream.read().decode("utf-8").splitlines()
-    reader = csv.DictReader(stream)
+        stream = file.stream.read().decode("utf-8").splitlines()
+        reader = csv.DictReader(stream)
 
-    required_fields = {"amount", "type", "merchant"}
+        required_fields = {"amount", "merchant"}
 
-    created = 0
-    failed = 0
+        created = 0
+        failed = 0
 
-    for row in reader:
-        if not required_fields.issubset(row.keys()):
-            failed += 1
-            continue
+        for row in reader:
+            if not required_fields.issubset(row.keys()):
+                failed += 1
+                continue
 
-        try:
-            merchant = row["merchant"]
+            try:
+                merchant = row["merchant"]
+                # Handle both "type" and "txn_type" field names
+                txn_type = row.get("type") or row.get("txn_type") or "DEBIT"
+                
+                txn = Transaction(
+                    user_id=user_id,
+                    amount=float(row["amount"]),
+                    txn_type=txn_type.upper(),
+                    merchant=merchant,
+                    category=row.get("category") or auto_categorize(merchant),
+                    mode=row.get("mode", "UNKNOWN"),
+                    source="CSV"
+                )
+                db.session.add(txn)
+                created += 1
+            except Exception as e:
+                print(f"Error processing row: {e}")
+                failed += 1
 
-            txn = Transaction(
-                user_id=user_id,
-                amount=float(row["amount"]),
-                txn_type=row["type"].upper(),
-                merchant=merchant,
-                category=row.get("category") or auto_categorize(merchant),
-                mode=row.get("mode", "UNKNOWN"),
-                source="CSV"
-            )
-            db.session.add(txn)
-            created += 1
-        except Exception:
-            failed += 1
+        db.session.commit()
 
-    db.session.commit()
-
-    return {
-        "message": "CSV processed",
-        "created": created,
-        "failed": failed
-    }, 201
+        return {
+            "message": "CSV processed",
+            "created": created,
+            "failed": failed
+        }, 201
+    except Exception as e:
+        print(f"Upload error: {e}")
+        return {"error": f"Upload failed: {str(e)}"}, 500
 
 
 # ------------------------
 # Excel Upload (.xlsx)
 # ------------------------
 @txn_bp.route("/upload-excel", methods=["POST"])
-@jwt_required()
 def upload_excel():
-    user_id = get_jwt_identity()
+    # Use test user for now (testing without auth)
+    user_id = "test-user-123"
 
     if "file" not in request.files:
         return {"error": "Excel file is required"}, 400

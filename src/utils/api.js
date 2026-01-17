@@ -114,6 +114,38 @@ class ApiClient {
   }
 
   /**
+   * Upload request for file uploads
+   * @param {string} endpoint - API endpoint
+   * @param {FormData} formData - FormData object containing files
+   * @returns {Promise<any>} Response data
+   */
+  async upload(endpoint, formData) {
+    const url = `${this.baseURL}${endpoint}`;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT);
+
+    try {
+      // Note: No 'Content-Type' header set - browser automatically sets it for FormData with boundary
+      const response = await fetch(url, {
+        method: 'POST',
+        body: formData,
+        signal: controller.signal,
+        headers: {
+          ...this.getAuthHeaders(),
+        },
+      });
+      clearTimeout(timeoutId);
+      return handleResponse(response);
+    } catch (error) {
+      clearTimeout(timeoutId);
+      if (error.name === 'AbortError') {
+        throw new Error('Request timeout');
+      }
+      throw error;
+    }
+  }
+
+  /**
    * Put request
    * @param {string} endpoint - API endpoint
    * @param {any} data - Request body
@@ -159,4 +191,3 @@ export const apiClient = new ApiClient();
 
 // Export class for custom instances
 export default ApiClient;
-

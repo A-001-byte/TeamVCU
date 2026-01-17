@@ -1,6 +1,11 @@
-merchant,amount,type,category,mode
-Starbucks,5.50,debit,Food,card
-Uber,12.00,debit,Transport,card
-Salary,3000.00,credit,Income,bank
-Netflix,15.00,debit,Subscription,card
-Amazon,45.20,debit,Shopping,card
+date,month,merchant,description,amount,type,category,sub_category,mode,account,currency,status,balance_after,notes,tags
+2026-01-01,January,Salary,Monthly salary credited,3000.00,credit,Income,Salary,bank,Savings Account,USD,completed,5200.00,January salary,salary;income
+2026-01-02,January,Starbucks,Coffee and snack,5.50,debit,Food,Coffee,card,Credit Card,USD,completed,5194.50,Morning coffee,food;coffee
+2026-01-03,January,Uber,Office commute,12.00,debit,Transport,Cab,card,Credit Card,USD,completed,5182.50,Daily commute,transport;work
+2026-01-05,January,Amazon,Household items,45.20,debit,Shopping,Household,card,Credit Card,USD,completed,5137.30,Monthly supplies,shopping;home
+2026-01-06,January,Netflix,Monthly subscription,15.00,debit,Subscription,Entertainment,card,Credit Card,USD,completed,5122.30,Auto-debit,subscription
+2026-01-08,January,Gym Membership,Fitness monthly fee,30.00,debit,Health,Fitness,upi,UPI Wallet,USD,completed,5092.30,Gym renewal,health;fitness
+2026-01-10,January,Grocery Store,Monthly groceries,120.75,debit,Food,Groceries,card,Debit Card,USD,completed,4971.55,Weekly groceries,food;essentials
+2026-01-15,January,Electricity Board,Electricity bill,65.40,debit,Utilities,Electricity,bank,Savings Account,USD,completed,4906.15,January bill,utilities
+2026-01-18,January,Internet Provider,Broadband bill,40.00,debit,Utilities,Internet,bank,Savings Account,USD,completed,4866.15,Broadband,utilities
+2026-01-25,January,Restaurant,Dinner with friends,60.00,debit,Food,Dining Out,card,Credit Card,USD,completed,4806.15,Weekend outing,food;social
