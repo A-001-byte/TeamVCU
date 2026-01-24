@@ -9,15 +9,17 @@
 .ca-card-large {
   display: flex;
   align-items: center;
-  background-color: #f9f9f9;
-  border-radius: 8px;
+  background-color: #fafbfb;
+  border-radius: 14px;
   padding: 20px;
-  border: 1px solid #eee;
-  transition: box-shadow 0.3s ease;
+  border: 1px solid #e8e6e3;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
 .ca-card-large:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
 }
 
 .ca-avatar-large {
@@ -26,6 +28,7 @@
   border-radius: 50%;
   margin-right: 20px;
   object-fit: cover;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
 }
 
 .ca-details {
@@ -36,6 +39,7 @@
   font-size: 1.5rem;
   font-weight: 600;
   margin: 0;
+  color: #2c2c2c;
 }
 
 .ca-meta-large {
@@ -43,7 +47,7 @@
   gap: 20px;
   align-items: center;
   margin: 10px 0;
-  color: #555;
+  color: #6b6b6b;
 }
 
 .ca-meta-large span {
@@ -55,18 +59,22 @@
 .ca-expertise-large {
   margin: 10px 0;
   font-size: 1rem;
+  color: #6b6b6b;
 }
 
 .connect-btn {
-  background-color: #007bff;
+  background: linear-gradient(135deg, #6b8dd6 0%, #5fbd9f 100%);
   color: white;
   padding: 10px 20px;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  box-shadow: 0 4px 8px rgba(107, 141, 214, 0.15);
 }
 
 .connect-btn:hover {
-  background-color: #0056b3;
+  box-shadow: 0 8px 16px rgba(107, 141, 214, 0.25);
+  transform: translateY(-2px);
 }
