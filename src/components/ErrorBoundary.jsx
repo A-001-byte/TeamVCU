@@ -20,11 +20,21 @@ class ErrorBoundary extends Component {
 
   render() {
     if (this.state.hasError) {
+      const error = this.state.error;
       return (
         <div className="error-boundary">
           <div className="error-boundary-content">
             <h2>Something went wrong</h2>
             <p>We're sorry, but something unexpected happened.</p>
+            {process.env.NODE_ENV === 'development' && error && (
+              <details style={{ marginTop: '1rem', padding: '1rem', background: '#f3f4f6', borderRadius: '8px' }}>
+                <summary style={{ cursor: 'pointer', fontWeight: 'bold' }}>Error Details (Development Only)</summary>
+                <pre style={{ marginTop: '0.5rem', fontSize: '0.875rem', overflow: 'auto' }}>
+                  {error.toString()}
+                  {error.stack && `\n\n${error.stack}`}
+                </pre>
+              </details>
+            )}
             <button
               onClick={() => {
                 this.setState({ hasError: false, error: null });

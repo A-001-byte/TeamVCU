@@ -41,10 +41,16 @@ const fetchWithTimeout = async (url, options = {}) => {
  */
 const handleResponse = async (response) => {
   if (!response.ok) {
-    const error = await response.json().catch(() => ({
-      message: `HTTP error! status: ${response.status}`,
-    }));
-    throw new Error(error.message || 'An error occurred');
+    let error;
+    try {
+      error = await response.json();
+    } catch {
+      error = {
+        message: `HTTP error! status: ${response.status}`,
+        error: response.statusText || 'Unknown error'
+      };
+    }
+    throw new Error(error.message || error.error || 'An error occurred');
   }
   return response.json();
 };
@@ -58,6 +64,16 @@ class ApiClient {
   }
 
   /**
+   * Get auth headers with token
+   * Token is synced from Supabase session to localStorage by authService
+   * @returns {object} Headers object
+   */
+  getAuthHeaders() {
+    const token = localStorage.getItem('thinktwice_token');
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  }
+
+  /**
    * Get request
    * @param {string} endpoint - API endpoint
    * @param {RequestInit} options - Fetch options
@@ -68,6 +84,10 @@ class ApiClient {
     const response = await fetchWithTimeout(url, {
       ...options,
       method: 'GET',
+      headers: {
+        ...this.getAuthHeaders(),
+        ...options.headers,
+      },
     });
     return handleResponse(response);
   }
@@ -85,8 +105,44 @@ class ApiClient {
       ...options,
       method: 'POST',
       body: JSON.stringify(data),
+      headers: {
+        ...this.getAuthHeaders(),
+        ...options.headers,
+      },
     });
     return handleResponse(response);
+  }
+
+  /**
+   * Upload request for file uploads
+   * @param {string} endpoint - API endpoint
+   * @param {FormData} formData - FormData object containing files
+   * @returns {Promise<any>} Response data
+   */
+  async upload(endpoint, formData) {
+    const url = `${this.baseURL}${endpoint}`;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT);
+
+    try {
+      // Note: No 'Content-Type' header set - browser automatically sets it for FormData with boundary
+      const response = await fetch(url, {
+        method: 'POST',
+        body: formData,
+        signal: controller.signal,
+        headers: {
+          ...this.getAuthHeaders(),
+        },
+      });
+      clearTimeout(timeoutId);
+      return handleResponse(response);
+    } catch (error) {
+      clearTimeout(timeoutId);
+      if (error.name === 'AbortError') {
+        throw new Error('Request timeout');
+      }
+      throw error;
+    }
   }
 
   /**
@@ -102,6 +158,10 @@ class ApiClient {
       ...options,
       method: 'PUT',
       body: JSON.stringify(data),
+      headers: {
+        ...this.getAuthHeaders(),
+        ...options.headers,
+      },
     });
     return handleResponse(response);
   }
@@ -117,6 +177,10 @@ class ApiClient {
     const response = await fetchWithTimeout(url, {
       ...options,
       method: 'DELETE',
+      headers: {
+        ...this.getAuthHeaders(),
+        ...options.headers,
+      },
     });
     return handleResponse(response);
   }
@@ -127,4 +191,3 @@ export const apiClient = new ApiClient();
 
 // Export class for custom instances
 export default ApiClient;
-
